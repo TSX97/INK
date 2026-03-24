@@ -1,3 +1,0 @@
-/home/Tsx976/code/OctoLink/build/CMakeFiles/octolink.dir
-/home/Tsx976/code/OctoLink/build/CMakeFiles/edit_cache.dir
-/home/Tsx976/code/OctoLink/build/CMakeFiles/rebuild_cache.dir
