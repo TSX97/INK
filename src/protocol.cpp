@@ -6,6 +6,23 @@
 using namespace std;
 
 namespace TENTA {
+    void reg(const std::string& name, std::shared_ptr<Client>& client, ClientManager& cm) {
+        if (name.empty()) {
+            client->send(tools::error("name cannot be empty").dump());
+            return;
+        }
+
+        auto existing =  cm.find_by_name(name);
+        if (existing) {
+            client->send(tools::error("user already exists").dump());
+            return;
+        }
+
+        client->name = name;
+        client->send(tools::ok("Registered as " + name).dump());
+        cout << "User " << client->name << " registered" << std::endl;
+    }
+
     void bnd(const std::string& target_name, std::shared_ptr<Client>& client, ClientManager& cm) {
         if (target_name.empty()) {
             client->send(tools::error("target name cannot be empty").dump());

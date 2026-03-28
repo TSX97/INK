@@ -10,31 +10,32 @@ find_package(nlohmann_json REQUIRED)
 include_directories(include)
 
 # Server
-add_executable(ink_server
+add_executable(server
         src/main.cpp
         src/server.cpp
         src/client.cpp
         src/manager.cpp
         src/fishman.cpp
         src/tools.cpp
+        src/protocol.cpp
 )
 
 # Client
-add_executable(ink_client
+add_executable(client
         src/client_app.cpp
         src/client.cpp
         src/manager.cpp
         src/tools.cpp
-        src/protocol.cpp
+
 )
 
-target_link_libraries(ink_server
+target_link_libraries(server
         Boost::system
         nlohmann_json::nlohmann_json
         pthread
 )
 
-target_link_libraries(ink_client
+target_link_libraries(client
         Boost::system
         nlohmann_json::nlohmann_json
         pthread

@@ -31,18 +31,41 @@ namespace tools {
 
     nlohmann::json parse_json(const std::string& raw) {
         try {
-            return nlohmann::json::parse(raw);
+            auto j = nlohmann::json::parse(raw);
+            if (!j.is_object()) {
+                return nlohmann::json::object();
+            }
+            return j;
         } catch (...) {
             return nlohmann::json::object();
         }
     }
 
+    nlohmann::json user_command_to_json(const std::string& line) {
+
+        if (line.rfind("BND ", 0) == 0) {
+            return {{"cmd", "BND"}, {"target", line.substr(4)}};
+        } else if (line.rfind("MSG ", 0) == 0) {
+            return {{"cmd", "MSG"}, {"text", line.substr(4)}};
+        } else if (line.rfind("REG ", 0) == 0) {
+            return {{"cmd", "REG"}, {"name", line.substr(4)}};
+        } else if (line == "/exit") {
+            return {{"cmd", "EXT"}};
+        }
+        return {{"cmd", "UNK"}, {"text", line}};
+    }
+
     std::string get_cmd(const nlohmann::json& j) {
+        if (!j.is_object()) return "";
         return j.value("cmd", "");
     }
 
     std::string get_arg(const nlohmann::json& j, const std::string& key) {
-        return j.value(key, "");
+        if (!j.is_object()) return "";
+        auto it = j.find(key);
+        if (it == j.end()) return "";
+        if (!it->is_string()) return "";
+        return it->get<std::string>();
     }
 
     // ========== ФОРМИРОВАНИЕ ОТВЕТОВ ==========

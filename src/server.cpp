@@ -7,6 +7,7 @@ using namespace std;
 Server::Server(short port)
     : acceptor_(io_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
     cout << "acceptor created" << endl;
+    Fishman::init();
 }
 
 Server::~Server() = default;
@@ -30,7 +31,6 @@ void Server::accept() {
 }
 
 void Server::handle_client(shared_ptr<Client> client) {
-    //TODO чтение, парсинг, Fishman
     char data[1024];
     boost::system::error_code ec;
     while (true) {
@@ -39,5 +39,4 @@ void Server::handle_client(shared_ptr<Client> client) {
         std::string raw(data, len);
         Fishman::handle(raw, client, client_manager_);
     }
-    //TODO логика, Fishman
 }

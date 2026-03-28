@@ -13,6 +13,7 @@ namespace tools {
 
     // JSON утилиты
     nlohmann::json parse_json(const std::string& raw);
+    nlohmann::json user_command_to_json(const std::string& line);
     std::string get_cmd(const nlohmann::json& j);
     std::string get_arg(const nlohmann::json& j, const std::string& key);
 
