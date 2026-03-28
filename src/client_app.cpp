@@ -18,7 +18,7 @@ int main() {
         tcp::resolver resolver(io);
         auto endpoints = resolver.resolve("127.0.0.1", "8080");
         boost::asio::connect(socket, endpoints);
-
+;
         cout << "Connected to Ink server!\n";
 
         string username;
@@ -60,7 +60,7 @@ int main() {
 
         string line;
         while (getline(cin, line)) {
-            if (line == "/exit") {
+            if (line == "EXT") {
                 running = false;
                 socket.close();
                 break;

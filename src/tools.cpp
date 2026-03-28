@@ -49,7 +49,7 @@ namespace tools {
             return {{"cmd", "MSG"}, {"text", line.substr(4)}};
         } else if (line.rfind("REG ", 0) == 0) {
             return {{"cmd", "REG"}, {"name", line.substr(4)}};
-        } else if (line == "/exit") {
+        } else if (line == "EXT") {
             return {{"cmd", "EXT"}};
         }
         return {{"cmd", "UNK"}, {"text", line}};

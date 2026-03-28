@@ -1,6 +1,7 @@
 #include "server.hpp"
 #include "fishman.hpp"
 #include <thread>
+#include <boost/asio.hpp>
 
 using namespace std;
 
@@ -31,12 +32,12 @@ void Server::accept() {
 }
 
 void Server::handle_client(shared_ptr<Client> client) {
-    char data[1024];
+    char buf[1024];
     boost::system::error_code ec;
     while (true) {
-        size_t len = client->socket.read_some(boost::asio::buffer(data), ec);
+        size_t len = client->socket.read_some(boost::asio::buffer(buf), ec);
         if (ec) break;
-        std::string raw(data, len);
+        std::string raw(buf, len);
         Fishman::handle(raw, client, client_manager_);
     }
 }
