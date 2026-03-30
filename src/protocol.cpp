@@ -65,8 +65,11 @@ namespace TENTA {
         }
         vector<string> names;
         for (const auto& c : clients) {
-            if (c->name == client->name) {
+            if (c->name == client->target) {
                 names.push_back("*" + c->name);
+                continue;
+            }
+            if (c->name == client->name) {
                 continue;
             }
             names.push_back(c->name);
