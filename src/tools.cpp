@@ -1,5 +1,7 @@
 #include "tools.hpp"
 #include <sstream>
+#include <string>
+#include <vector>
 #include <algorithm>
 
 namespace tools {
@@ -43,8 +45,15 @@ namespace tools {
 
     nlohmann::json user_command_to_json(const std::string& line) {
 
-        if (line.rfind("BND ", 0) == 0) {
-            return {{"cmd", "BND"}, {"target", line.substr(4)}};
+        if (line.rfind("REG ", 0) == 0) {
+            // REG Vasya 1234
+            std::vector<std::string> parts = split(line, ' ');
+            if (parts.size() >= 3) {
+                return {{"cmd", "REG"}, {"name", parts[1]}, {"password", parts[2]}};
+            }
+            return {{"cmd", "REG"}, {"name", line.substr(4)}};
+        } else if (line.rfind("AUT ", 0) == 0) {
+            return {{"cmd", "MSG"}, {"password", line.substr(4)}};
         } else if (line.rfind("MSG ", 0) == 0) {
             return {{"cmd", "MSG"}, {"text", line.substr(4)}};
         } else if (line.rfind("REG ", 0) == 0) {

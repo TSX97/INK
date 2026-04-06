@@ -1,12 +1,14 @@
-#include "server.hpp"
+#include "net/server.hpp"
 #include "net/fishman.hpp"
 #include <thread>
 #include <boost/asio.hpp>
+#include "db/database.hpp"
 
 using namespace std;
 
-Server::Server(short port)
-    : acceptor_(io_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
+Server::Server(short port, const std::string& db_conn_string)
+    : acceptor_(io_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+    db_(db_conn_string) {
     cout << "acceptor created" << endl;
     Fishman::init();
 }
@@ -38,6 +40,6 @@ void Server::handle_client(shared_ptr<Client> client) {
         size_t len = client->socket.read_some(boost::asio::buffer(buf), ec);
         if (ec) break;
         std::string raw(buf, len);
-        Fishman::handle(raw, client, client_manager_);
+        Fishman::handle(raw, client, client_manager_,  db_);
     }
 }

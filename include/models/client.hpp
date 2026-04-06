@@ -8,6 +8,7 @@
 struct Client {
     std::string name;
     int id;
+    int user_id;
     std::string target;
     boost::asio::ip::tcp::socket socket;
 

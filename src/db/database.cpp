@@ -41,3 +41,19 @@ int Database::authenticate(const string& name, const string& password) {
     PQclear(res);
     return crypto::verify_password(password, stored_hash) ? id : -1;
 }
+
+int Database::find_user(const string& name) {
+    if (!conn) return -1;
+    string sql = "SELECT * "
+                 "FROM users "
+                 "WHERE name = '" + name + "'";
+    PGresult* res = PQexec(conn, sql.c_str());
+    if (PQresultStatus(res) != PGRES_TUPLES_OK || PQntuples(res) == 0) {
+        PQclear(res);
+        return -1;
+    }
+    int id = atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+    return id;
+}
+

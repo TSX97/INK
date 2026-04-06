@@ -1,4 +1,5 @@
 #include "net/protocol.hpp"
+#include "db/database.hpp"
 #include "tools.hpp"
 #include <iostream>
 #include <string>
@@ -6,15 +7,19 @@
 using namespace std;
 
 namespace TENTA {
-    void reg(const std::string& name, std::shared_ptr<Client>& client, ClientManager& cm) {
+    void reg(const std::string& name, std::shared_ptr<Client>& client, ClientManager& cm, Database& db) {
         if (name.empty()) {
             client->send(tools::error("name cannot be empty").dump());
             return;
         }
 
-        auto existing =  cm.find_by_name(name);
-        if (existing) {
+        if (db.find_user(name) != -1) {
             client->send(tools::error("user already exists").dump());
+            return;
+        }
+
+        if (!db.create_user(name, "temp")) {
+            client->send(tools::error("db error").dump());
             return;
         }
 
@@ -22,6 +27,18 @@ namespace TENTA {
         client->send(tools::ok("Registered as " + name).dump());
         cm.add(client);
         cout << "User " << client->name << " registered" << std::endl;
+    }
+
+    void aut(const string& name, const string& password, shared_ptr<Client>& client, Database& db) {
+        int user_id = db.authenticate(name, password);
+        if (user_id == -1) {
+            client->send(tools::error("Invalid credentials").dump());
+            return;
+        }
+        client->user_id = user_id;
+        client->name = name;
+        client->send(tools::ok("Authenticated as " + name).dump());
+        cout << "user " << client->name << " (id=" << user_id << ") authenticated" << endl;
     }
 
     void bnd(const std::string& target_name, std::shared_ptr<Client>& client, ClientManager& cm) {
