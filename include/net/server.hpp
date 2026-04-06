@@ -17,7 +17,7 @@ private:
     void accept();
 
 public:
-    Server(short port, const std::string& db_conn_string);
+    Server(short port, Database& db);
     ~Server();
     void run();
     void stop();

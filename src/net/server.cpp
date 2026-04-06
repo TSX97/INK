@@ -6,9 +6,9 @@
 
 using namespace std;
 
-Server::Server(short port, const std::string& db_conn_string)
+Server::Server(short port, Database& db)
     : acceptor_(io_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
-    db_(db_conn_string) {
+    db_(db) {
     cout << "acceptor created" << endl;
     Fishman::init();
 }

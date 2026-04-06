@@ -53,7 +53,11 @@ namespace tools {
             }
             return {{"cmd", "REG"}, {"name", line.substr(4)}};
         } else if (line.rfind("AUT ", 0) == 0) {
-            return {{"cmd", "MSG"}, {"password", line.substr(4)}};
+            std::vector<std::string> parts = split(line, ' ');
+            if (parts.size() >= 3) {
+                return {{"cmd", "AUT"}, {"name", parts[1]}, {"password", parts[2]}};
+            }
+            return {{"cmd", "AUT"}, {"name", line.substr(4)}};
         } else if (line.rfind("MSG ", 0) == 0) {
             return {{"cmd", "MSG"}, {"text", line.substr(4)}};
         } else if (line.rfind("REG ", 0) == 0) {

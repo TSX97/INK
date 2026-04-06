@@ -76,27 +76,38 @@ namespace TENTA {
         cout << client->name << " -> " << client->target << ": " << text << std::endl;
     }
 
-    void lst(shared_ptr<Client>& client, ClientManager& cm) {
+    void lst(shared_ptr<Client>& client, ClientManager& cm, Database& db) {
+        vector<string> result;
+
+        // 1. Онлайн-клиенты (с * для target)
         vector<shared_ptr<Client>> clients = cm.get_all();
-        if (clients.empty()) {
-            return;
-        }
-        vector<string> names;
         for (const auto& c : clients) {
+            if (c->name == client->name) continue;
             if (c->name == client->target) {
-                names.push_back("*" + c->name);
-                continue;
+                result.push_back("*" + c->name);
+            } else {
+                result.push_back(c->name);
             }
-            if (c->name == client->name) {
-                continue;
-            }
-            names.push_back(c->name);
         }
-        client->send("\n" + tools::join(names, "\n"));
+
+        // 2. Разделитель
+        if (!result.empty() && db.get_all().size() > 0) {
+            result.push_back("---");
+        }
+
+        // 3. Все пользователи из БД (id | name)
+        auto users = db.get_all();  // возвращает vector<pair<int, string>>
+        for (const auto& [id, name] : users) {
+            result.push_back(std::to_string(id) + " | " + name);
+        }
+
+        client->send("\n" + tools::join(result, "\n"));
     }
 
     void ext(shared_ptr<Client>& client) {
          client->send(tools::ok("Goodbye").dump());
     }
+
+
 
 } // namespace TENTA

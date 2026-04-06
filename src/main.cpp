@@ -3,8 +3,9 @@
 using namespace std;
 
 int main() {
-    Database db("dbname=ink user=postgres password=your_password");
-    Server server(8080, "dbname=ink user=postgres password=your_password");
+    Database db("dbname=ink user=postgres password=143 host=localhost");
+    Server server(8080, db);
     server.run();
     return 0;
 }
+

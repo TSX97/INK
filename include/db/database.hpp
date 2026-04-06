@@ -3,6 +3,8 @@
 
 #include <string>
 #include <libpq-fe.h>
+#include <vector>
+#include <string>
 
 class Database {
 public:
@@ -12,6 +14,7 @@ public:
 	int find_user(const std::string& name);
 	int authenticate(const std::string& name, const std::string& password);
 	void save_message(int from, int to, const std::string& text);
+	std::vector<std::pair<int, std::string>> get_all();
 
 private:
 	PGconn* conn;

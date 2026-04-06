@@ -39,8 +39,7 @@ namespace Fishman {
         };
 
         handlers["LST"] = [](const json& j, std::shared_ptr<Client> client, ClientManager& cm, Database& db) {
-            TENTA::lst(client, cm);
-
+            TENTA::lst(client, cm, db);
         };
 
         handlers["EXT"] = [](const json& j, std::shared_ptr<Client> client, ClientManager& cm, Database& db) {
