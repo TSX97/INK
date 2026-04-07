@@ -17,15 +17,16 @@ namespace Fishman {
 
         handlers["REG"] = [](const json& j, auto client, auto& cm, Database& db) {
             std::cout << "DEBUG: j = " << j.dump() << std::endl;
-            std::string name = tools::get_arg(j, "name");
-            std::cout << "DEBUG: name = '" << name << "'" << std::endl;
-            TENTA::reg(name, client, cm, db);
+            std::string login = tools::get_arg(j, "login");
+            std::string password = tools::get_arg(j, "password");
+            std::cout << "DEBUG: login = '" << login << "'" << std::endl;
+            TENTA::reg(login, password, client, cm, db);
         };
 
         handlers["AUT"] = [](const json& j, auto client, auto& cm, Database& db) {
-            string name = tools::get_arg(j, "name");
+            string login = tools::get_arg(j, "login");
             string password = tools::get_arg(j, "password");
-            TENTA::aut(name, password, client, db);
+            TENTA::aut(login, password, client, db);
         };
 
         handlers["BND"] = [](const json& j, std::shared_ptr<Client> client, ClientManager& cm, Database& db) {

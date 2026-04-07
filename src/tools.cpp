@@ -49,19 +49,19 @@ namespace tools {
             // REG Vasya 1234
             std::vector<std::string> parts = split(line, ' ');
             if (parts.size() >= 3) {
-                return {{"cmd", "REG"}, {"name", parts[1]}, {"password", parts[2]}};
+                return {{"cmd", "REG"}, {"login", parts[1]}, {"password", parts[2]}};
             }
-            return {{"cmd", "REG"}, {"name", line.substr(4)}};
+            return {{"cmd", "REG"}, {"login", line.substr(4)}};
         } else if (line.rfind("AUT ", 0) == 0) {
             std::vector<std::string> parts = split(line, ' ');
             if (parts.size() >= 3) {
-                return {{"cmd", "AUT"}, {"name", parts[1]}, {"password", parts[2]}};
+                return {{"cmd", "AUT"}, {"login", parts[1]}, {"password", parts[2]}};
             }
-            return {{"cmd", "AUT"}, {"name", line.substr(4)}};
+            return {{"cmd", "AUT"}, {"login", line.substr(4)}};
         } else if (line.rfind("MSG ", 0) == 0) {
             return {{"cmd", "MSG"}, {"text", line.substr(4)}};
-        } else if (line.rfind("REG ", 0) == 0) {
-            return {{"cmd", "REG"}, {"name", line.substr(4)}};
+        } else if (line.rfind("BND ", 0) == 0) {
+            return {{"cmd", "BND"}, {"target", line.substr(4)}};
         } else if (line.rfind("LST", 0) == 0) {
             return {{"cmd", "LST"}};
         } else if (line == "EXT") {

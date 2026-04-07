@@ -18,26 +18,35 @@ int main() {
         tcp::resolver resolver(io);
         auto endpoints = resolver.resolve("127.0.0.1", "8080");
         boost::asio::connect(socket, endpoints);
-;
-        cout << "Connected to Ink server!\n";
+        ;
+        cout << "Connected to Ink server!" << endl;
 
-        string username;
-        cout << "Enter your username: ";
-        getline(cin, username);
-        for (char& c : username) {
-            if (c < 32 || c > 126) c = '_';
+        string response;
+        cout << "Do you have an account? [Y/n]" << endl;
+        cin >> response;
+        cout << "Enter login: ";
+        string login;
+        cin >> login;
+        cout << "Enter password: ";
+        string password;
+        cin >> password;
+
+        if (response == "Y" || response == "y") {
+                json aut = {{"cmd", "AUT"}, {"login", login}, {"password", password}};
+                boost::asio::write(socket, boost::asio::buffer(aut.dump() + "\n"));
+        } else if (response == "N" || response == "n") {
+            json reg = {{"cmd", "REG"}, {"login", login}, {"password", password}};
+            boost::asio::write(socket, boost::asio::buffer(reg.dump() + "\n"));
+        } else {
+            cout << "Invalid response." << endl;
         }
 
 
-        json reg = tools::user_command_to_json("REG " + username);
-        string raw = reg.dump();
-        boost::asio::write(socket, boost::asio::buffer(raw + "\n"));
-
-        char buffer[1024];
-        boost::system::error_code ec;
-        size_t len = socket.read_some(boost::asio::buffer(buffer), ec);
-        if (!ec) {
-            string resp(buffer, len);
+        char resp_buffer[1024];
+        boost::system::error_code ec2;
+        size_t resp_len = socket.read_some(boost::asio::buffer(resp_buffer), ec2);
+        if (!ec2) {
+            string resp(resp_buffer, resp_len);
             cout << "Server: " << resp << endl;
         }
 

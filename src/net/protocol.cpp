@@ -7,37 +7,41 @@
 using namespace std;
 
 namespace TENTA {
-    void reg(const std::string& name, std::shared_ptr<Client>& client, ClientManager& cm, Database& db) {
-        if (name.empty()) {
+    void reg(const std::string& login, const std::string& password, std::shared_ptr<Client>& client, ClientManager& cm, Database& db) {
+        if (login.empty()) {
             client->send(tools::error("name cannot be empty").dump());
+            int user_id = db.find_user(login);
+            client->user_id = user_id;
+            client->name = login;
+            client->send(tools::ok("Registered and authenticated as " + login).dump());
             return;
         }
 
-        if (db.find_user(name) != -1) {
+        if (db.find_user(login) != -1) {
             client->send(tools::error("user already exists").dump());
             return;
         }
 
-        if (!db.create_user(name, "temp")) {
+        if (!db.create_user(login, password)) {
             client->send(tools::error("db error").dump());
             return;
         }
 
-        client->name = name;
-        client->send(tools::ok("Registered as " + name).dump());
+        client->name = login;
+        client->send(tools::ok("Registered as " + login).dump());
         cm.add(client);
         cout << "User " << client->name << " registered" << std::endl;
     }
 
-    void aut(const string& name, const string& password, shared_ptr<Client>& client, Database& db) {
-        int user_id = db.authenticate(name, password);
+    void aut(const string& login, const string& password, shared_ptr<Client>& client, Database& db) {
+        int user_id = db.authenticate(login, password);
         if (user_id == -1) {
             client->send(tools::error("Invalid credentials").dump());
             return;
         }
         client->user_id = user_id;
-        client->name = name;
-        client->send(tools::ok("Authenticated as " + name).dump());
+        client->name = login;
+        client->send(tools::ok("Authenticated as " + login).dump());
         cout << "user " << client->name << " (id=" << user_id << ") authenticated" << endl;
     }
 
@@ -96,9 +100,17 @@ namespace TENTA {
         }
 
         // 3. Все пользователи из БД (id | name)
-        auto users = db.get_all();  // возвращает vector<pair<int, string>>
+        auto users = db.get_all();
         for (const auto& [id, name] : users) {
-            result.push_back(std::to_string(id) + " | " + name);
+            bool already_in_result = false;
+            for (const auto& existing : result) {
+                if (existing == name) {
+                    already_in_result = true;
+                }
+            }
+            if (!already_in_result) {
+                result.push_back(std::to_string(id) + " | " + name);
+            }
         }
 
         client->send("\n" + tools::join(result, "\n"));
