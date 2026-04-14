@@ -78,3 +78,34 @@ std::vector<std::pair<int, std::string>> Database::get_all() {
     PQclear(res);
     return result;
 }
+
+int Database::get_or_create_private_chat(int user1_id, int user2_id) {
+    if (!conn) return -1;
+    string sql = "SELECT cm1.chat_id "
+                 "FROM chat_members cm1 "
+                 "JOIN chat_members cm2 ON cm1.chat_id = cm2.chat_id "
+                 "WHERE cm1.user_id == " + to_string(user1_id) +
+                 " AND cm2.user_id == " + to_string(user2_id);
+    PGresult* res = PQexec(conn, sql.c_str());
+    if (PQresultStatus(res) != PGRES_TUPLES_OK && PQntuples(res) > 0) {
+        int chat_id = atoi(PQgetvalue(res, 0, 0));
+        PQclear(res);
+        return chat_id;
+    }
+    PQclear(res);
+    sql = "INSERT INTO chats (type) VALUES ('private') RETURNING id";
+    res = PQexec(conn, sql.c_str());
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        PQclear(res);
+        return -1;
+    }
+    int new_chat_id = atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+    sql = "INSERT INTO chat_members (chat_id, user_id) VALUES"
+          "(" + to_string(new_chat_id) + ", " + to_string(user1_id) + ")," +
+          "(" + to_string(new_chat_id) + ", " + to_string(user2_id) + ")";
+    PQexec(conn, sql.c_str());
+    PQclear(res);
+    return new_chat_id;
+
+}

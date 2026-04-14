@@ -17,4 +17,5 @@ cmake-build-*/
 Thumbs.db
 
 # Scripts
-lines.py
+delete_all.sh
+includes.sh

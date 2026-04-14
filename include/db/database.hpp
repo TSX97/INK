@@ -15,6 +15,7 @@ public:
 	int authenticate(const std::string& name, const std::string& password);
 	void save_message(int from, int to, const std::string& text);
 	std::vector<std::pair<int, std::string>> get_all();
+	int get_or_create_private_chat(int user1_id, int user2_id);
 
 private:
 	PGconn* conn;
